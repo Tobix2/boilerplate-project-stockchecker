@@ -3,12 +3,24 @@ require('dotenv').config();
 const express     = require('express');
 const bodyParser  = require('body-parser');
 const cors        = require('cors');
+const helmet      = require('helmet');  // <-- Agregado
 
 const apiRoutes         = require('./routes/api.js');
 const fccTestingRoutes  = require('./routes/fcctesting.js');
 const runner            = require('./test-runner');
 
 const app = express();
+
+app.use(
+  helmet.contentSecurityPolicy({
+    directives: {
+      defaultSrc: ["'self'"],       // sólo permite recursos del mismo origen
+      scriptSrc: ["'self'"],        // scripts sólo desde tu servidor
+      styleSrc: ["'self'"],         // CSS sólo desde tu servidor
+      // opcionalmente podés agregar otros recursos si los usas, por ejemplo fonts o imágenes
+    },
+  })
+);
 
 app.use('/public', express.static(process.cwd() + '/public'));
 
